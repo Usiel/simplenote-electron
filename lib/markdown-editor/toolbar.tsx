@@ -5,7 +5,8 @@ import { Tooltip } from '@mui/material';
 
 import ChecklistIcon from '../icons/check-list';
 import { CmdOrCtrl } from '../utils/platform';
-import { isSelectionInTitleBlock } from './editor-utils';
+import { getActiveListType, isSelectionInTitleBlock } from './editor-utils';
+import { toggleListAtSelection } from './list-toggle';
 import {
   BlockquoteIcon,
   BoldIcon,
@@ -90,9 +91,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
       h2: current.isActive('heading', { level: 2 }),
       h3: current.isActive('heading', { level: 3 }),
       h4: current.isActive('heading', { level: 4 }),
-      bulletList: current.isActive('bulletList'),
-      orderedList: current.isActive('orderedList'),
-      taskList: current.isActive('taskList'),
+      activeList: getActiveListType(current),
       blockquote: current.isActive('blockquote'),
       codeBlock: current.isActive('codeBlock'),
     }),
@@ -209,24 +208,24 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
 
       <ToolbarGroup>
         <ToolbarButton
-          active={state.bulletList}
+          active={state.activeList === 'bulletList'}
           disabled={blockDisabled}
           icon={BulletListIcon}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          onClick={() => toggleListAtSelection(editor, 'bulletList')}
           title="Bullet list"
         />
         <ToolbarButton
-          active={state.orderedList}
+          active={state.activeList === 'orderedList'}
           disabled={blockDisabled}
           icon={OrderedListIcon}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          onClick={() => toggleListAtSelection(editor, 'orderedList')}
           title="Numbered list"
         />
         <ToolbarButton
-          active={state.taskList}
+          active={state.activeList === 'taskList'}
           disabled={blockDisabled}
           icon={ChecklistIcon}
-          onClick={() => editor.chain().focus().toggleTaskList().run()}
+          onClick={() => toggleListAtSelection(editor, 'taskList')}
           title={`Task list • ${CmdOrCtrl}+Shift+C`}
         />
       </ToolbarGroup>
