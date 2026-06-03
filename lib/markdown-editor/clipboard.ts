@@ -1,6 +1,8 @@
 import { Extension } from '@tiptap/core';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 
+import { normalizeDuplicateTaskMarkers } from './task-list-markdown';
+
 /** Block markdown: lists, headings, fences, ordered lists. */
 const BLOCK_MARKDOWN_PATTERN =
   /(^|\n)(\s{0,3}(?:[-+*]\s+(?:\[[ xX]\]\s+)?|#{1,6}\s+|```|\d+\.\s+))/;
@@ -32,9 +34,12 @@ export const MarkdownClipboard = Extension.create({
               return false;
             }
 
-            return editor.commands.insertContent(text, {
-              contentType: 'markdown',
-            });
+            return editor.commands.insertContent(
+              normalizeDuplicateTaskMarkers(text),
+              {
+                contentType: 'markdown',
+              }
+            );
           },
           clipboardTextSerializer: (slice) => {
             const fallback = slice.content.textBetween(

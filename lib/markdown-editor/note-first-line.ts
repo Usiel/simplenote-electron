@@ -3,6 +3,8 @@
  * Used when saving markdown notes and when enabling the markdown system tag.
  */
 
+import { normalizeDuplicateTaskMarkers } from './task-list-markdown';
+
 const H1_PREFIX = '# ';
 
 const firstLine = (content: string): string => {
@@ -51,4 +53,4 @@ export const stripMarkdownH1 = (content: string): string => {
 };
 
 export const normalizeNoteMarkdown = (content: string): string =>
-  ensureMarkdownH1(content);
+  normalizeDuplicateTaskMarkers(ensureMarkdownH1(content));

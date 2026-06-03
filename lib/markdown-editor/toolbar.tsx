@@ -51,6 +51,7 @@ const ToolbarButton = ({
         data-active-state={active ? 'on' : 'off'}
         data-size="small"
         disabled={disabled}
+        onMouseDown={(event) => event.preventDefault()}
         onClick={onClick}
         type="button"
       >

@@ -43,4 +43,10 @@ describe('normalizeNoteMarkdown', () => {
     const withH1 = ensureMarkdownH1(original);
     expect(stripMarkdownH1(withH1)).toBe(original);
   });
+
+  it('collapses duplicate task markers on one line', () => {
+    expect(
+      normalizeNoteMarkdown('# Note\n\n- [ ] - [ ] change this to ordered\n')
+    ).toBe('# Note\n\n- [ ] change this to ordered\n');
+  });
 });

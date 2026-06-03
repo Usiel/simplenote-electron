@@ -13,7 +13,7 @@ import actions from '../state/actions';
 
 import { createNoteEditorExtensions } from './extensions';
 import { handleEditorClick } from './handle-editor-click';
-import { ensureMarkdownH1, normalizeNoteMarkdown } from './note-first-line';
+import { normalizeNoteMarkdown } from './note-first-line';
 import { MarkdownEditorToolbar } from './toolbar';
 
 import './style.scss';
@@ -72,7 +72,7 @@ export const MarkdownEditorView: React.FunctionComponent<Props> = ({
         return;
       }
 
-      const markdown = ensureMarkdownH1(
+      const markdown = normalizeNoteMarkdown(
         withCheckboxSyntax(getMarkdownFromEditor(editor))
       );
       lastSavedContent.current = markdown;
@@ -211,9 +211,11 @@ export const MarkdownEditorView: React.FunctionComponent<Props> = ({
         return;
       }
 
-      const markdown = currentEditor
-        ? withCheckboxSyntax(getMarkdownFromEditor(currentEditor))
-        : note.content;
+      const markdown = normalizeNoteMarkdown(
+        currentEditor
+          ? withCheckboxSyntax(getMarkdownFromEditor(currentEditor))
+          : (note.content ?? '')
+      );
 
       const didWrite = writeClipboardPayload(
         event.clipboardData,
