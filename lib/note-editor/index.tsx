@@ -6,6 +6,11 @@ import NoteDetail from '../note-detail';
 import MarkdownEditor from '../markdown-editor';
 import actions from '../state/actions';
 import * as selectors from '../state/selectors';
+import {
+  dispatchToggleChecklist,
+  isInsertChecklistShortcut,
+} from '../utils/checklist-shortcut';
+import { isElectron } from '../utils/platform';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -55,6 +60,19 @@ export class NoteEditor extends Component<Props> {
     const { note, noteId, toggleMarkdown } = this.props;
 
     const cmdOrCtrl = ctrlKey || metaKey;
+
+    if (
+      note &&
+      !note.deleted &&
+      this.props.isEditorActive &&
+      isInsertChecklistShortcut(event) &&
+      (this.markdownEnabled() || isElectron)
+    ) {
+      dispatchToggleChecklist();
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
 
     // toggle Markdown enabled
     if (note && cmdOrCtrl && shiftKey && 'm' === key) {
