@@ -6,6 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const fs = require('fs');
+const path = require('path');
 
 function readConfig() {
   const configPath = fs.existsSync('./config-local.json')
@@ -53,6 +54,12 @@ module.exports = () => {
     // target: 'browserslist', // this seems like it should be "node" or "electron-renderer" but those both crash
     module: {
       rules: [
+        {
+          test: /\.m?js$/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
         {
           test: /\.[jt]sx?$/,
           exclude: /node_modules/,
@@ -102,6 +109,16 @@ module.exports = () => {
     resolve: {
       extensions: ['.js', '.jsx', '.json', '.scss', '.css', '.ts', '.tsx'],
       modules: ['node_modules'],
+      alias: {
+        'react/jsx-runtime': path.resolve(
+          __dirname,
+          'node_modules/react/jsx-runtime.js'
+        ),
+        'react/jsx-dev-runtime': path.resolve(
+          __dirname,
+          'node_modules/react/jsx-dev-runtime.js'
+        ),
+      },
     },
     plugins: [
       new NodePolyfillPlugin({

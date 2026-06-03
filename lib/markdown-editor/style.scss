@@ -1,0 +1,205 @@
+@use '../../scss/variables' as *;
+
+// TipTap toolbar tokens mapped to Simplenote theme
+.note-detail-markdown-editor {
+  --tt-toolbar-height: 2.75rem;
+  --tt-toolbar-bg-color: var(--background-color);
+  --tt-toolbar-border-color: var(--secondary-color);
+  --tt-button-default-bg-color: transparent;
+  --tt-button-hover-bg-color: var(--highlight-color, rgba(0, 0, 0, 0.06));
+  --tt-button-active-bg-color: var(--highlight-color, rgba(0, 0, 0, 0.1));
+  --tt-button-default-text-color: var(--foreground-color);
+  --tt-button-hover-text-color: var(--foreground-color);
+  --tt-button-active-text-color: var(--foreground-color);
+  --tt-button-default-icon-color: var(--foreground-color);
+  --tt-button-active-icon-color: var(--foreground-color);
+  --tt-radius-md: 4px;
+  --tt-radius-lg: 4px;
+}
+
+.note-detail.note-detail-markdown-editor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.markdown-editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+// TipTap default fixed toolbar (adapted)
+.tiptap-toolbar[data-variant='fixed'] {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  flex-shrink: 0;
+  width: 100%;
+  min-height: var(--tt-toolbar-height);
+  background: var(--tt-toolbar-bg-color);
+  border-bottom: 1px solid var(--tt-toolbar-border-color);
+  padding: 0 0.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tiptap-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+
+.tiptap-separator {
+  width: 1px;
+  height: 1.5rem;
+  margin: 0 0.25rem;
+  background: var(--tt-toolbar-border-color);
+  flex-shrink: 0;
+}
+
+.tiptap-button {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.15;
+  height: 2rem;
+  min-width: 2rem;
+  border: none;
+  padding: 0.5rem;
+  gap: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--tt-radius-lg);
+  background-color: var(--tt-button-default-bg-color);
+  color: var(--tt-button-default-text-color);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 1px;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: var(--tt-button-hover-bg-color);
+    color: var(--tt-button-hover-text-color);
+  }
+
+  &[data-active-state='on'],
+  &.is-active {
+    background-color: var(--tt-button-active-bg-color);
+    color: var(--tt-button-active-text-color);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &[data-size='small'] {
+    height: 1.75rem;
+    min-width: 1.75rem;
+    padding: 0.25rem;
+    border-radius: var(--tt-radius-md);
+  }
+}
+
+.tiptap-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  color: var(--tt-button-default-icon-color);
+
+  svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: currentColor;
+  }
+
+  .tiptap-button[data-active-state='on'] &,
+  .tiptap-button.is-active & {
+    color: var(--tt-button-active-icon-color);
+  }
+}
+
+.markdown-editor-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+
+  // EditorContent wrapper
+  > div {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .tiptap.ProseMirror.note-detail-markdown {
+    min-height: 100%;
+    height: auto;
+    overflow: visible;
+    padding: 12px 16px 20px;
+    outline: none;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+    }
+
+    h1 {
+      font-size: 1.75em;
+      font-weight: 700;
+      margin: 0 0 0.5em;
+    }
+
+    ul[data-type='taskList'] {
+      list-style: none;
+      padding-left: 0;
+
+      li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5em;
+
+        > label {
+          flex-shrink: 0;
+          user-select: none;
+        }
+
+        > div {
+          flex: 1;
+        }
+      }
+    }
+  }
+}

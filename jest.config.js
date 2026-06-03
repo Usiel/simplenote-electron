@@ -8,4 +8,5 @@ module.exports = {
   roots: ['desktop', 'lib'],
   testEnvironment: 'jsdom',
   testRegex: '(/test/.*\\.[jt]sx?)|(test\\.[jt]sx?)$',
+  transformIgnorePatterns: ['/node_modules/(?!(marked|@tiptap/markdown)/)'],
 };

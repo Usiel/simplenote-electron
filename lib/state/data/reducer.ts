@@ -1,6 +1,10 @@
 import { combineReducers } from 'redux';
 
 import {
+  ensureMarkdownH1,
+  stripMarkdownH1,
+} from '../../markdown-editor/note-first-line';
+import {
   tagHashOf as t,
   tagNameOf,
   withTag,
@@ -130,9 +134,13 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         ? [...note.systemTags, 'markdown' as T.SystemTag]
         : note.systemTags.filter((tag) => tag !== 'markdown');
 
+      const content = action.shouldEnableMarkdown
+        ? ensureMarkdownH1(note.content)
+        : stripMarkdownH1(note.content);
+
       return new Map(state).set(
         action.noteId,
-        modified({ ...note, systemTags })
+        modified({ ...note, systemTags, content })
       );
     }
 

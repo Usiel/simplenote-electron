@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import SearchResultsBar from '../search-results-bar';
 import TagField from '../tag-field';
 import NoteDetail from '../note-detail';
-import NotePreview from '../components/note-preview';
+import MarkdownEditor from '../markdown-editor';
 import actions from '../state/actions';
 import * as selectors from '../state/selectors';
 
@@ -114,8 +114,7 @@ export class NoteEditor extends Component<Props> {
   };
 
   render() {
-    const { editMode, hasSearchQuery, hasSearchMatchesInNote, note, noteId } =
-      this.props;
+    const { hasSearchQuery, hasSearchMatchesInNote, note, noteId } = this.props;
 
     if (!note) {
       return (
@@ -129,13 +128,16 @@ export class NoteEditor extends Component<Props> {
 
     return (
       <div className="note-editor">
-        {editMode || !note.systemTags.includes('markdown') ? (
-          <NoteDetail
+        {note.systemTags.includes('markdown') ? (
+          <MarkdownEditor
             storeFocusEditor={this.storeFocusEditor}
             storeHasFocus={this.storeEditorHasFocus}
           />
         ) : (
-          <NotePreview noteId={noteId} />
+          <NoteDetail
+            storeFocusEditor={this.storeFocusEditor}
+            storeHasFocus={this.storeEditorHasFocus}
+          />
         )}
         {note && !isTrashed && (
           <TagField
