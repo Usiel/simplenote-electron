@@ -8,6 +8,7 @@ import Typography from '@tiptap/extension-typography';
 import StarterKit from '@tiptap/starter-kit';
 
 import { normalizeSafeLinkHref } from '../utils/url-safety';
+import { BlockSpacer } from './block-spacer';
 import { MarkdownClipboard } from './clipboard';
 import { FirstLineH1 } from './first-line-h1';
 
@@ -43,6 +44,7 @@ export const createNoteEditorExtensions = () => [
   Image.configure({ allowBase64: false }),
   Typography,
   FirstLineH1,
+  BlockSpacer,
   MarkdownClipboard,
   Markdown.configure({ markedOptions: { gfm: true } }),
 ];
