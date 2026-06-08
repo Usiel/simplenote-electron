@@ -180,13 +180,6 @@
     // add huge gaps between list items.
     li > p {
       margin: 0;
-      line-height: 1.15;
-    }
-
-    ul p,
-    ol p {
-      margin: 0;
-      line-height: 1.15;
     }
 
     ul {
@@ -194,8 +187,11 @@
     }
 
     ol {
-      margin: 0;
       padding-left: 1.4em;
+    }
+
+    ul[data-type='taskList'] {
+      padding-left: 9.4em;
     }
 
     // Preview stylesheet pulls root task items left; keep editor layout neutral.
@@ -215,38 +211,22 @@
     }
 
     ul[data-type='taskList'] {
-      list-style: none;
+      // list-style: none;
       padding-left: 0;
+
+      label {
+        padding-left: 0.3em;
+      }
 
       // Direct task items only — descendant ol/ul li must stay list-item (markers).
       > li {
         display: flex;
-        align-items: flex-start;
+        // align-items: flex-start;
         gap: 0.5em;
 
         > label {
-          flex-shrink: 0;
+          // flex-shrink: 0;
           user-select: none;
-        }
-
-        > div {
-          flex: 1;
-          min-width: 0;
-
-          > ul,
-          > ol {
-            margin: 0;
-            padding-left: 1.4em;
-          }
-
-          > ol > li,
-          > ul:not([data-type='taskList']) > li {
-            display: list-item;
-          }
-
-          > ul[data-type='taskList'] > li {
-            display: flex;
-          }
         }
       }
     }
