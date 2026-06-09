@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import '../scss/style.scss';
 
@@ -30,5 +30,6 @@ class LoggingOut extends Component {
 }
 
 export const boot = () => {
-  render(<LoggingOut />, document.getElementById('root'));
+  const root = createRoot(document.getElementById('root')!);
+  root.render(<LoggingOut />);
 };

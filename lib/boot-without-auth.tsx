@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Auth as AuthApp } from './auth';
 import { Auth as SimperiumAuth } from 'simperium';
 import { recordEvent } from './state/analytics/middleware';
@@ -277,5 +277,6 @@ class AppWithoutAuth extends Component<Props, State> {
 
 export const boot = (onAuth: (token: string, username: string) => any) => {
   Modal.setAppElement('#root');
-  render(<AppWithoutAuth onAuth={onAuth} />, document.getElementById('root'));
+  const root = createRoot(document.getElementById('root')!);
+  root.render(<AppWithoutAuth onAuth={onAuth} />);
 };
