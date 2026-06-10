@@ -76,6 +76,17 @@ export const initSimperium =
     }
 
     const noteBucket = client.bucket('note');
+
+    // A rejected change stays in localQueue.sent because simperium only clears
+    // it on acknowledge. Release it so subsequent edits can sync.
+    const releaseStuckNoteChange = (noteId: T.EntityId) => {
+      const localQueue = (noteBucket.channel as any).localQueue;
+      if (localQueue.sent[noteId]) {
+        delete localQueue.sent[noteId];
+        localQueue.processQueue(noteId);
+      }
+    };
+
     noteBucket.channel.on(
       'update',
       (entityId, updatedEntity, original, patch, isIndexing) => {
@@ -128,6 +139,27 @@ export const initSimperium =
         entityId: entityId as T.EntityId,
         ccid: change.ccid,
       });
+    });
+
+    // fires when the server rejects a change with an error code the client
+    // can't recover from on its own, e.g. 413 when a note is too large.
+    // NB: must listen on the bucket, not the channel: the bucket forwards
+    // channel errors, and emitting 'error' on the listenerless bucket throws
+    noteBucket.on('error', (error, change) => {
+      const noteId = change?.id as T.EntityId | undefined;
+      const errorCode = (error as { code?: unknown })?.code;
+
+      debug(`sync error for note ${noteId}: ${errorCode}`);
+
+      if (noteId && 'number' === typeof errorCode) {
+        releaseStuckNoteChange(noteId);
+
+        dispatch({
+          type: 'NOTE_SYNC_ERROR',
+          noteId,
+          errorCode,
+        });
+      }
     });
 
     const tagBucket = client.bucket('tag');
@@ -293,6 +325,9 @@ export const initSimperium =
         case 'CREATE_NOTE_WITH_ID':
         case 'INSERT_TASK_INTO_NOTE':
         case 'EDIT_NOTE':
+          if (prevState.simperium.syncErrors.has(action.noteId)) {
+            releaseStuckNoteChange(action.noteId);
+          }
           queueNoteUpdate(action.noteId);
           return result;
 
