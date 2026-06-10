@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
+import AlertIcon from '../icons/attention';
 import PublishIcon from '../icons/published-small';
 import SmallPinnedIcon from '../icons/pinned-small';
 import SmallSyncIcon from '../icons/sync-small';
@@ -29,6 +30,7 @@ type StateProps = {
   lastUpdated: number;
   note?: T.Note;
   searchQuery: string;
+  syncErrorCode: number | null;
 };
 
 type DispatchProps = {
@@ -77,6 +79,7 @@ export class NoteCell extends Component<Props> {
       openNote,
       pinNote,
       searchQuery,
+      syncErrorCode,
     } = this.props;
 
     if (!note) {
@@ -156,6 +159,18 @@ export class NoteCell extends Component<Props> {
                 <SmallSyncIcon />
               </span>
             )}
+            {null !== syncErrorCode && (
+              <span
+                className="note-list-item-sync-error"
+                title={
+                  413 === syncErrorCode
+                    ? 'This note could not be synced because it is too large.'
+                    : `This note could not be synced (error ${syncErrorCode}).`
+                }
+              >
+                <AlertIcon />
+              </span>
+            )}
             {isPublished && (
               <span className="note-list-item-published-icon">
                 <PublishIcon />
@@ -179,6 +194,7 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (
   lastUpdated: state.simperium.lastRemoteUpdate.get(noteId) ?? -Infinity,
   note: state.data.notes.get(noteId),
   searchQuery: state.ui.searchQuery,
+  syncErrorCode: state.simperium.syncErrors.get(noteId) ?? null,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {

@@ -60,6 +60,40 @@ const lastSync: A.Reducer<Map<T.EntityId, number>> = (
   }
 };
 
+const syncErrors: A.Reducer<Map<T.EntityId, number>> = (
+  state = emptyMap as Map<T.EntityId, number>,
+  action
+) => {
+  switch (action.type) {
+    case 'NOTE_SYNC_ERROR':
+      return new Map(state).set(action.noteId, action.errorCode);
+
+    // a new attempt is in flight or the note synced after all
+    case 'SUBMIT_PENDING_CHANGE':
+    case 'ACKNOWLEDGE_PENDING_CHANGE':
+    case 'REMOTE_NOTE_UPDATE':
+    case 'REMOTE_NOTE_DELETE_FOREVER':
+    case 'DELETE_NOTE_FOREVER': {
+      const noteId =
+        'SUBMIT_PENDING_CHANGE' === action.type ||
+        'ACKNOWLEDGE_PENDING_CHANGE' === action.type
+          ? action.entityId
+          : action.noteId;
+
+      if (!state.has(noteId)) {
+        return state;
+      }
+
+      const next = new Map(state);
+      next.delete(noteId);
+      return next;
+    }
+
+    default:
+      return state;
+  }
+};
+
 const lastRemoteUpdate: A.Reducer<Map<T.EntityId, number>> = (
   state = emptyMap as Map<T.EntityId, number>,
   action
@@ -80,4 +114,5 @@ export default combineReducers({
   ghosts,
   lastSync,
   lastRemoteUpdate,
+  syncErrors,
 });
