@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { createRoot } from 'react-dom/client';
+import { getAppRoot } from './app-root';
 
 import '../scss/style.scss';
 
@@ -30,6 +30,5 @@ class LoggingOut extends Component {
 }
 
 export const boot = () => {
-  const root = createRoot(document.getElementById('root')!);
-  root.render(<LoggingOut />);
+  getAppRoot().render(<LoggingOut />);
 };

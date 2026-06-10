@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { getAppRoot } from '../app-root';
 
 import BootWarning from '../components/boot-warning';
 
@@ -18,8 +18,7 @@ const deps = [['localStorage', hasLocalStorage()]] as const;
 const missingDeps = deps.filter(([, hasIt]) => !hasIt).map(([name]) => name);
 
 if (missingDeps.length) {
-  const root = createRoot(document.getElementById('root')!);
-  root.render(
+  getAppRoot().render(
     <BootWarning>
       <p>
         Simplenote depends on a few web technologies to operate. Please make

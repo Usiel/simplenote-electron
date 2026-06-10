@@ -42,7 +42,9 @@ const TransitionDelayEnter: FunctionComponent<OwnProps> = ({
       timeout={200 /* fade-in speed */}
       unmountOnExit={true}
     >
-      <div ref={nodeRef}>{children}</div>
+      <div ref={nodeRef} className="transition-delay-enter-wrapper">
+        {children}
+      </div>
     </CSSTransition>
   );
 };

@@ -7,7 +7,7 @@ import App from './app';
 import { ErrorBoundaryWithAnalytics } from './error-boundary';
 import Modal from 'react-modal';
 import { makeStore } from './state';
-import { createRoot } from 'react-dom/client';
+import { getAppRoot } from './app-root';
 import { Provider } from 'react-redux';
 import { initSimperium } from './state/simperium/middleware';
 
@@ -40,8 +40,7 @@ export const bootWithToken = (
       settings: store.getState().settings,
     });
 
-    const root = createRoot(document.getElementById('root')!);
-    root.render(
+    getAppRoot().render(
       <Provider store={store}>
         <ErrorBoundaryWithAnalytics
           isDevConfig={isDevConfig(config?.development)}
