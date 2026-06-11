@@ -9,6 +9,7 @@ import SmallSyncIcon from '../icons/sync-small';
 import { decorateWith, makeFilterDecorator } from './decorators';
 import { getTerms } from '../utils/filter-notes';
 import { noteTitleAndPreview } from '../utils/note-utils';
+import { getSyncErrorMessage } from '../utils/sync-error-message';
 import { withCheckboxCharacters } from '../utils/task-transform';
 
 import actions from '../state/actions';
@@ -24,12 +25,12 @@ type OwnProps = {
 
 type StateProps = {
   displayMode: T.ListDisplayMode;
-  hasPendingChanges: boolean;
   isOffline: boolean;
   isOpened: boolean;
   lastUpdated: number;
   note?: T.Note;
   searchQuery: string;
+  showSyncSpinner: boolean;
   syncErrorCode: number | null;
 };
 
@@ -70,7 +71,6 @@ export class NoteCell extends Component<Props> {
   render() {
     const {
       displayMode,
-      hasPendingChanges,
       isOffline,
       isOpened,
       lastUpdated,
@@ -79,6 +79,7 @@ export class NoteCell extends Component<Props> {
       openNote,
       pinNote,
       searchQuery,
+      showSyncSpinner,
       syncErrorCode,
     } = this.props;
 
@@ -150,7 +151,7 @@ export class NoteCell extends Component<Props> {
             )}
           </button>
           <div className="note-list-item-status-right">
-            {hasPendingChanges && (
+            {showSyncSpinner && (
               <span
                 className={classNames('note-list-item-pending-changes', {
                   'is-offline': isOffline,
@@ -164,7 +165,7 @@ export class NoteCell extends Component<Props> {
                 className="note-list-item-sync-error"
                 title={
                   413 === syncErrorCode
-                    ? 'This note could not be synced because it is too large.'
+                    ? 'This note could not be synced because it is too large. Try removing content or splitting it into smaller notes.'
                     : `This note could not be synced (error ${syncErrorCode}).`
                 }
               >
@@ -188,12 +189,12 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (
   { noteId }
 ) => ({
   displayMode: state.settings.noteDisplay,
-  hasPendingChanges: selectors.noteHasPendingChanges(state, noteId),
   isOffline: state.simperium.connectionStatus === 'offline',
   isOpened: state.ui.openedNote === noteId,
   lastUpdated: state.simperium.lastRemoteUpdate.get(noteId) ?? -Infinity,
   note: state.data.notes.get(noteId),
   searchQuery: state.ui.searchQuery,
+  showSyncSpinner: selectors.noteShowSyncSpinner(state, noteId),
   syncErrorCode: state.simperium.syncErrors.get(noteId) ?? null,
 });
 
