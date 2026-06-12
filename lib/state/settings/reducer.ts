@@ -73,18 +73,28 @@ const noteDisplay: A.Reducer<T.ListDisplayMode> = (state = 'comfy', action) => {
   }
 };
 
+// Caching the notifications permission status (expensive in Electron)
+let notificationsGranted = window.Notification?.permission === 'granted';
+
+navigator.permissions?.query({ name: 'notifications' }).then((status) => {
+  status.addEventListener('change', () => {
+    notificationsGranted = status.state === 'granted';
+  });
+});
+
 const sendNotifications: A.Reducer<boolean> = (
-  state = window.Notification?.permission === 'granted',
+  state = notificationsGranted,
   action
 ) => {
   switch (action.type) {
     case 'REQUEST_NOTIFICATIONS':
-      return action.sendNotifications
-        ? window.Notification?.permission === 'granted'
-        : false;
+      // An explicit user action, and the permission prompt may have just
+      // resolved: re-read the real value instead of trusting the cache.
+      notificationsGranted = window.Notification?.permission === 'granted';
+      return action.sendNotifications ? notificationsGranted : false;
 
     default:
-      return state && window.Notification?.permission === 'granted';
+      return state && notificationsGranted;
   }
 };
 
