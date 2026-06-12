@@ -7,7 +7,7 @@ import App from './app';
 import { ErrorBoundaryWithAnalytics } from './error-boundary';
 import Modal from 'react-modal';
 import { makeStore } from './state';
-import { render } from 'react-dom';
+import { getAppRoot } from './app-root';
 import { Provider } from 'react-redux';
 import { initSimperium } from './state/simperium/middleware';
 
@@ -38,18 +38,16 @@ export const bootWithToken = (
 
     window.electron?.send('appStateUpdate', {
       settings: store.getState().settings,
-      editMode: store.getState().ui.editMode,
     });
 
-    render(
+    getAppRoot().render(
       <Provider store={store}>
         <ErrorBoundaryWithAnalytics
           isDevConfig={isDevConfig(config?.development)}
         >
           <App isDevConfig={isDevConfig(config?.development)} />
         </ErrorBoundaryWithAnalytics>
-      </Provider>,
-      document.getElementById('root')
+      </Provider>
     );
   });
 };

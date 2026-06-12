@@ -72,24 +72,22 @@ export const normalizeSafeLinkHref = (href: string | null): string | null => {
     return trimmed;
   }
 
-  try {
-    const url = new URL(trimmed);
+  if (
+    trimmed.startsWith('http://') ||
+    trimmed.startsWith('https://') ||
+    trimmed.startsWith('mailto:')
+  ) {
+    return trimmed;
+  }
 
-    if (url.protocol === 'http:' || url.protocol === 'https:') {
-      return url.href;
-    }
-
-    if (
-      url.protocol === 'mailto:' &&
-      isemail.validate(trimmed.slice('mailto:'.length))
-    ) {
-      return trimmed;
-    }
-  } catch (e) {
+  // Reject anything else with an explicit scheme (javascript:, data:, ...)
+  // rather than prefixing it into a bogus https URL. A colon followed by
+  // digits is a port (example.com:8080), not a scheme.
+  if (/^[a-z][a-z0-9+.-]*:(?!\d)/i.test(trimmed)) {
     return null;
   }
 
-  return null;
+  return 'https://' + trimmed;
 };
 
 export const normalizeSafeImageSrc = (src: string | null): string | null => {

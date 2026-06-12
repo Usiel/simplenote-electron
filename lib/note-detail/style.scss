@@ -154,30 +154,48 @@ body[data-theme='dark'] .note-detail-markdown {
 
   $ul-padding-left: 1.4em;
 
-  ul {
+  ul,
+  ol {
     padding-left: $ul-padding-left;
   }
 
-  // Remove unneeded margin on root-level tasklist items
-  & > ul > .task-list-item {
-    margin-left: -#{$ul-padding-left};
+  // Lexical indents by wrapping sublists in an empty parent <li>, which would
+  // otherwise show two markers (e.g. "2. 1."). Hide the wrapper marker.
+  li:has(> ol:only-child),
+  li:has(> ul:only-child),
+  .lexical-nested-list-item {
+    list-style: none;
   }
 
   .task-list-item {
-    // It's good to have immediate CSS feedback on click since
-    // there will be a slight delay until the checkbox actually toggles
-    &:active {
-      input {
-        transform: scale(0.9);
-      }
-    }
-
-    input {
+    // Lexical checklists use role="checkbox" on <li> (no <input>); reuse task
+    // icon font from .note-detail-markdown in theme.scss. CheckListExtension
+    // toggles on click only within getComputedStyle(li, '::before').width from
+    // the left edge of the <li>, so the marker needs an explicit box (see
+    // Lexical PlaygroundEditorTheme listItemChecked/Unchecked styles).
+    &[role='checkbox'] {
+      display: block;
+      list-style: none;
+      margin-left: -#{$ul-padding-left};
+      outline: none;
+      padding-left: 1.4em;
       position: relative;
-      bottom: 0.0625em;
-      margin-right: 4px;
-      height: 1em;
-      vertical-align: middle;
+
+      &::before {
+        content: '\e000';
+        cursor: pointer;
+        display: block;
+        left: 0;
+        position: absolute;
+      }
+
+      &[aria-checked='true']::before {
+        content: '\e001';
+      }
+
+      &[aria-checked='false']::before {
+        content: '\e000';
+      }
     }
   }
 

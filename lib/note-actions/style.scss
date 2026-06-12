@@ -5,7 +5,8 @@
   width: 200px;
   position: absolute;
   right: 16px;
-  top: $toolbar-height + 16px;
+  top: $toolbar-height + 1rem;
+  z-index: 10;
   border: 1px solid var(--secondary-color);
   border-radius: 6px;
   box-shadow: 0 3px 6px 0 var(--overlay-color);
